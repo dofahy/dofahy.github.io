@@ -1,7 +1,8 @@
 ---
+layout: post
 title: first entry
 description: using github pages
-date: 2026-03-17
+date: 2026-04-17
 tags: [github, linux]
 ---
 
