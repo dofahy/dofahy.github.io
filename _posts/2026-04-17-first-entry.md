@@ -8,10 +8,15 @@ tags: [github, linux]
 ---
 
 ```
-can copy the clock in plasma to get a timestamp
+kde tips
+    can copy the clock in plasma to get a timestamp useful for jekyll date requirements.
 
 getting familiar with github pages
+https://docs.github.com/en/pages
     created this blog
     
 read up on creative commons license
+https://creativecommons.org/licenses/
+
+
 ```
