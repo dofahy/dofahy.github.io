@@ -20,14 +20,11 @@ https://creativecommons.org/licenses/
 
 blog and github profile looking good.
     adding some features to blog
-        posts tag grouping
-        pagination
-        giscus comments
         search
         rss feed
-        last updated timestamps
+        pagination
+        giscus comments
         
-
 back to today's original plan - building redis from scratch
     first looking at https://xmonader.github.io/nimdays/day12_resp.html
     
