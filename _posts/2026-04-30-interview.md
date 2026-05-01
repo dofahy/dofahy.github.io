@@ -1,8 +1,8 @@
 ---
 layout: post
-title: interview, python, security, apis
+title: interview, python, apis
 author: dofahy
-description: interview, python, security, apis
+description: interview, python, apis
 date: 2026-04-30
 tags: [interview, python]
 ---
