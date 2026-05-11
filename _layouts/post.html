@@ -1,0 +1,12 @@
+---
+layout: post
+---
+
+<h1>{{ page.title }}</h1>
+
+<p>
+  Published {{ page.date | date: "%B %d, %Y" }}
+  • Updated {{ page.last_modified_at | date: "%B %d, %Y" }}
+</p>
+
+{{ content }}
