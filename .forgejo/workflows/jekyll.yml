@@ -1,0 +1,25 @@
+name: jekyll
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: docker
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: install deps
+        run: bundle install
+
+      - name: build site
+        run: bundle exec jekyll build

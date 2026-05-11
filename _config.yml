@@ -3,5 +3,7 @@ plugins:
 - jekyll-remote-theme
 - jekyll-feed
 - jekyll-last-modified-at
+last-modified-at:
+  date-format: '%Y-%m-%d'
 paginate: 50
 paginate_path: "/page:num/"
