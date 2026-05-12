@@ -37,6 +37,11 @@ jobs:
 
           ln -sfn /deploy/$PROJECT/releases/$RELEASE /deploy/$PROJECT/current
 
+      - name: Verify mount
+        run: |
+          mount | grep deploy
+          ls -la /deploy
+
   deploy:
     runs-on: docker
 
