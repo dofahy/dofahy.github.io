@@ -11,6 +11,8 @@ jobs:
 
     container:
       image: local/jekyll-builder:1
+      volumes:
+        - /srv/builds/blog:/deploy
 
     steps:
       - name: Checkout
@@ -24,38 +26,8 @@ jobs:
         run: |
           bundle exec jekyll build -d _site
 
-      - name: Package build into deploy volume
+      - name: Save archive on host-mounted path
         run: |
-          PROJECT=blog
           RELEASE=$(date +%Y%m%d-%H%M%S)
-
-          mkdir -p /deploy/$PROJECT/releases/$RELEASE
-
-          cp -a _site/. /deploy/$PROJECT/releases/$RELEASE
-
-          echo $RELEASE > /deploy/$PROJECT/LATEST
-
-          ln -sfn /deploy/$PROJECT/releases/$RELEASE /deploy/$PROJECT/current
-
-      - name: Verify mount
-        run: |
-          mount | grep deploy
-          ls -la /deploy
-
-  deploy:
-    runs-on: docker
-
-    needs: build
-
-    container:
-      image: docker.io/library/debian:bookworm
-
-    steps:
-      - name: Install tools
-        run: |
-          apt-get update
-          apt-get install -y coreutils
-
-      - name: Verify deployment
-        run: |
-          test -f /deploy/blog/current/index.html
+          mkdir -p /deploy/releases/$RELEASE
+          tar -czf /deploy/releases/$RELEASE/site.tar.gz -C _site .
