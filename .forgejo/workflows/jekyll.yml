@@ -1,25 +1,74 @@
-name: jekyll
+name: Build and Deploy Jekyll
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: docker
 
+    container:
+      image: docker.io/library/ruby:3.3-bookworm
+
     steps:
-      - name: checkout
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y build-essential git
+
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: setup ruby
-        uses: ruby/setup-ruby@v1
+      - name: Install Jekyll
+        run: |
+          gem install jekyll bundler
+
+      - name: Build site
+        run: |
+          jekyll build -d _site
+
+      - name: Package artifact
+        run: |
+          tar -czf site.tar.gz -C _site .
+
+      - name: Store artifact
+        uses: actions/upload-artifact@v4
         with:
-          ruby-version: '3.3'
-          bundler-cache: true
+          name: jekyll-site
+          path: site.tar.gz
 
-      - name: install deps
-        run: bundle install
+  deploy:
+    runs-on: docker
 
-      - name: build site
-        run: bundle exec jekyll build
+    needs: build
+
+    container:
+      image: docker.io/library/debian:bookworm
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jekyll-site
+
+      - name: Install tar
+        run: |
+          apt-get update
+          apt-get install -y tar coreutils
+
+      - name: Deploy release
+        run: |
+          PROJECT=blog
+          RELEASE=$(date +%Y%m%d-%H%M%S)
+
+          mkdir -p /deploy/releases/$RELEASE
+
+          tar -xzf site.tar.gz -C /deploy/releases/$RELEASE
+
+          ln -sfn /deploy/releases/$RELEASE /deploy/current
+
+      - name: Verify deployment
+        run: |
+          test -f /deploy/current/index.html
