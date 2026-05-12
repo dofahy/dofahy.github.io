@@ -10,24 +10,19 @@ jobs:
     runs-on: docker
 
     container:
-      image: docker.io/library/ruby:3.3-bookworm
+      image: local/jekyll-builder:1
 
     steps:
-      - name: Install system dependencies
-        run: |
-          apt-get update
-          apt-get install -y build-essential git nodejs npm
-
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Jekyll
+      - name: Install Ruby dependencies
         run: |
-          gem install jekyll bundler
+          bundle install
 
       - name: Build site
         run: |
-          jekyll build -d _site
+          bundle exec jekyll build -d _site
 
       - name: Package artifact
         run: |
