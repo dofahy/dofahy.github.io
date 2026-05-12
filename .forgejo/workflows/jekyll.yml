@@ -24,15 +24,18 @@ jobs:
         run: |
           bundle exec jekyll build -d _site
 
-      - name: Package artifact
+      - name: Package build into deploy volume
         run: |
-          tar -czf site.tar.gz -C _site .
+          PROJECT=blog
+          RELEASE=$(date +%Y%m%d-%H%M%S)
 
-      - name: Store artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: jekyll-site
-          path: site.tar.gz
+          mkdir -p /deploy/$PROJECT/releases/$RELEASE
+
+          cp -a _site/. /deploy/$PROJECT/releases/$RELEASE
+
+          echo $RELEASE > /deploy/$PROJECT/LATEST
+
+          ln -sfn /deploy/$PROJECT/releases/$RELEASE /deploy/$PROJECT/current
 
   deploy:
     runs-on: docker
@@ -43,27 +46,11 @@ jobs:
       image: docker.io/library/debian:bookworm
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: jekyll-site
-
-      - name: Install tar
+      - name: Install tools
         run: |
           apt-get update
-          apt-get install -y tar coreutils
-
-      - name: Deploy release
-        run: |
-          PROJECT=blog
-          RELEASE=$(date +%Y%m%d-%H%M%S)
-
-          mkdir -p /deploy/releases/$RELEASE
-
-          tar -xzf site.tar.gz -C /deploy/releases/$RELEASE
-
-          ln -sfn /deploy/releases/$RELEASE /deploy/current
+          apt-get install -y coreutils
 
       - name: Verify deployment
         run: |
-          test -f /deploy/current/index.html
+          test -f /deploy/blog/current/index.html
