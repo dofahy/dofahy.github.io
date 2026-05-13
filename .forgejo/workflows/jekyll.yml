@@ -1,4 +1,4 @@
-name: Build and Deploy Jekyll
+name: Build Jekyll
 
 on:
   push:
@@ -11,31 +11,23 @@ jobs:
 
     container:
       image: local/jekyll-builder:1
-      options: >-
-        -p 4000:4000
-      volumes:
-        - /srv/builds/blog:/deploy
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Ruby dependencies
-        run: |
-          bundle install
+        run: bundle install
 
       - name: Build site
-        run: |
-          bundle exec jekyll build -d _site
+        run: bundle exec jekyll build -d _site
 
-      - name: Save archive on host-mounted path
-        run: |
-          RELEASE=$(date +%Y%m%d-%H%M%S)
-          mkdir -p /deploy/releases/$RELEASE
-          tar -czf /deploy/releases/$RELEASE/site.tar.gz -C _site .
+      - name: Verify output
+        run: ls -lah _site
 
-      - name: Serve site for LAN testing
-        run: |
-          bundle exec jekyll serve \
-            --host 0.0.0.0 \
-            --port 4000
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jekyll-site
+          path: _site/
+          if-no-files-found: error
