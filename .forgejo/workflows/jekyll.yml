@@ -11,6 +11,8 @@ jobs:
 
     container:
       image: local/jekyll-builder:1
+      options: >-
+        -p 4000:4000
       volumes:
         - /srv/builds/blog:/deploy
 
@@ -31,3 +33,9 @@ jobs:
           RELEASE=$(date +%Y%m%d-%H%M%S)
           mkdir -p /deploy/releases/$RELEASE
           tar -czf /deploy/releases/$RELEASE/site.tar.gz -C _site .
+
+      - name: Serve site for LAN testing
+        run: |
+          bundle exec jekyll serve \
+            --host 0.0.0.0 \
+            --port 4000
