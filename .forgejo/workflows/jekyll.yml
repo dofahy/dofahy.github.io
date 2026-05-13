@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: docker
+    runs-on: docker:docker://docker.io/library/node:20-bookworm
 
     container:
       image: local/jekyll-builder:1
